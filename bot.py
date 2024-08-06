@@ -24,12 +24,13 @@ def fetch_inv(bot: TeleBot = None, message = None) -> dict:
     Fetch the inventary. If a bot and message are provided, send a confirmation that the fetch has been completed.
     """
     
-    DATA["INVENTARY"].update(readInv())
+    #DATA["INVENTARY"].update(readInv())
+    inv = readInv()
 
     if bot is not None and message is not None:
         bot.send_message(message.chat.id, "Fetch ok")
     
-    return DATA["INVENTARY"]
+    return inv
 
 #load bot data
 dataPath = os.path.join("resources", "bot_data.p")
@@ -158,9 +159,16 @@ def inv_cb(bot: TeleBot, call) -> None:
 def check_inv(bot: TeleBot, message) -> None:
     bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ}: {str(details)}" for categ, details in DATA["INVENTARY"].items()))
 
+def coffee(bot: TeleBot, message) -> None:
+    '''Ban whomever uses this command'''
+    chat_member = bot.get_chat_member(message.chat.id, message.from_user.id)
+    if not chat_member.status in ['creator', 'administrator'] :
+        bot.ban_chat_member(message.chat.id, message.from_user.id)
+        bot.send_message(message.chat.id, f"{message.from_user.first_name} used a forbidden command and must be punished. Let this serve as an example.")
+
 #-------------------------------------------------------------------------------------------------------------------
 
-funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv}
+funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee}
 callbacks = {"inv": inv_cb}
 def main() -> TeleBot:
     """
@@ -206,4 +214,4 @@ def main() -> TeleBot:
     return bot
 
 bot = main()
-bot.infinity_polling(restart_on_change = True)
+bot.infinity_polling()

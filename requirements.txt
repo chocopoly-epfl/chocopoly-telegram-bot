@@ -1,3 +1,6 @@
 telebot
 gspread
 oauth2client
+watchdog
+psutil
+
