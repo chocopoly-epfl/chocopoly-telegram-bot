@@ -162,23 +162,40 @@ def check_inv(bot: TeleBot, message) -> None:
 def check_if_group(func):
     def do_if_group(bot: TeleBot, message):
         chat_info = bot.get_chat(message.chat.id)
-        if chat_info.type == "group":
+        if chat_info.type in ["group", "supergroup"]:
             return func(bot, message)
         else:
             bot.send_message(message.chat.id, "Please use this command in a group.")
     return do_if_group
+
+def check_if_private(func):
+    def do_if_private(bot: TeleBot, message):
+        chat_info = bot.get_chat(message.chat.id)
+        if chat_info.type == "private":
+            return func(bot, message)
+        else:
+            bot.send_message(message.chat.id, "Please use this command in a private chat with the bot.")
+    return do_if_private
 
 @check_if_group
 def coffee(bot: TeleBot, message) -> None:
     '''Ban whomever uses this command'''
     chat_member = bot.get_chat_member(message.chat.id, message.from_user.id)
     if not chat_member.status in ['creator', 'administrator'] :
-        bot.ban_chat_member(message.chat.id, message.from_user.id)
+        #bot.ban_chat_member(message.chat.id, message.from_user.id)
         bot.send_message(message.chat.id, f"{message.from_user.first_name} used a forbidden command and had to be punished. Let this serve as an example.")
 
+@check_if_private
+def feedback(bot: TeleBot, message) -> None:
+    msg = bot.send_message(message.chat.id, "Please write the message you would like to send to the committee.")
+    bot.register_next_step_handler(msg, send_feedback, bot)
+
+def send_feedback(message, bot: TeleBot):
+    full_msg = f"Message sent by {message.from_user.full_name} \nTelegram username: {message.from_user.username}\nTelegram id: {message.from_user.id}\nMessage: {message.text}"
+    bot.send_message(GROUPS["Comite"], full_msg, message_thread_id=THREADS["Comite"]["Feedback"])
 #-------------------------------------------------------------------------------------------------------------------
 
-funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee}
+funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee, "/feedback": feedback}
 callbacks = {"inv": inv_cb}
 def main() -> TeleBot:
     """
