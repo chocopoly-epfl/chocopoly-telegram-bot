@@ -159,12 +159,22 @@ def inv_cb(bot: TeleBot, call) -> None:
 def check_inv(bot: TeleBot, message) -> None:
     bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ}: {str(details)}" for categ, details in DATA["INVENTARY"].items()))
 
+def check_if_group(func):
+    def do_if_group(bot: TeleBot, message):
+        chat_info = bot.get_chat(message.chat.id)
+        if chat_info.type == "group":
+            return func(bot, message)
+        else:
+            bot.send_message(message.chat.id, "Please use this command in a group.")
+    return do_if_group
+
+@check_if_group
 def coffee(bot: TeleBot, message) -> None:
     '''Ban whomever uses this command'''
     chat_member = bot.get_chat_member(message.chat.id, message.from_user.id)
     if not chat_member.status in ['creator', 'administrator'] :
         bot.ban_chat_member(message.chat.id, message.from_user.id)
-        bot.send_message(message.chat.id, f"{message.from_user.first_name} used a forbidden command and must be punished. Let this serve as an example.")
+        bot.send_message(message.chat.id, f"{message.from_user.first_name} used a forbidden command and had to be punished. Let this serve as an example.")
 
 #-------------------------------------------------------------------------------------------------------------------
 
