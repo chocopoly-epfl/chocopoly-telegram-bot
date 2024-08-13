@@ -1,5 +1,5 @@
 from telebot import TeleBot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from time import time
 from typing import List
 import os
@@ -159,6 +159,8 @@ def inv_cb(bot: TeleBot, call) -> None:
 def check_inv(bot: TeleBot, message) -> None:
     bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ}: {str(details)}" for categ, details in DATA["INVENTARY"].items()))
 
+'''Décorateurs servant à restreindre les commandes à des groupes ou conversations privées, respectivement.'''
+
 def check_if_group(func):
     def do_if_group(bot: TeleBot, message):
         chat_info = bot.get_chat(message.chat.id)
@@ -177,6 +179,8 @@ def check_if_private(func):
             bot.send_message(message.chat.id, "Please use this command in a private chat with the bot.")
     return do_if_private
 
+'''Fin des décorateurs'''
+
 @check_if_group
 def coffee(bot: TeleBot, message) -> None:
     '''Ban whomever uses this command'''
@@ -192,11 +196,23 @@ def feedback(bot: TeleBot, message) -> None:
 
 def send_feedback(message, bot: TeleBot):
     full_msg = f"Message sent by {message.from_user.full_name} \nTelegram username: {message.from_user.username}\nTelegram id: {message.from_user.id}\nMessage: {message.text}"
-    bot.send_message(GROUPS["Comite"], full_msg, message_thread_id=THREADS["Comite"]["Feedback"])
+    feedback_bttn = InlineKeyboardButton("Répondre", callback_data=f"resp|{message.from_user.id}")
+    feedback_mrkp = InlineKeyboardMarkup()
+    feedback_mrkp.add(feedback_bttn)
+    bot.send_message(GROUPS["Comite"], full_msg, message_thread_id=THREADS["Comite"]["Feedback"],reply_markup=feedback_mrkp)
+
+def respond_to_feedback(bot: TeleBot, call: CallbackQuery):
+    from_user_id = call.data.split(SEP_CALLBACK)[-1]
+    msg = bot.send_message(GROUPS["Comite"], f"Please answer user {from_user_id}.", message_thread_id=THREADS["Comite"]["Feedback"])
+    bot.register_next_step_handler(msg, send_response, bot, from_user_id)
+    
+def send_response(message, bot: TeleBot, id):
+    bot.send_message(id, message.text)
+
 #-------------------------------------------------------------------------------------------------------------------
 
 funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee, "/feedback": feedback}
-callbacks = {"inv": inv_cb}
+callbacks = {"inv": inv_cb, "resp": respond_to_feedback}
 def main() -> TeleBot:
     """
     Main function that defines how the bot handles messages.
