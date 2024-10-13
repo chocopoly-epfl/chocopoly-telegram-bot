@@ -10,4 +10,4 @@ cat << EOL > "$CONSTANTES_FILE"
 $CONSTANTES_CONTENT_PARSED
 EOL
 
-python3 bot.py
+exec python3 bot.py
