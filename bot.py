@@ -240,5 +240,7 @@ def main() -> TeleBot:
 
     return bot
 
+print("Bot started at", time())
+
 bot = main()
 bot.infinity_polling()
