@@ -8,7 +8,12 @@ scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive.file",
          "https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name(os.path.join("resources", "chocopoly-414509-188910a2ccf6.json"), scope)
+# read credentials from env, then write it to google-credentials.json
+credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+with open(os.path.join("resources", "google-credentials.json"), "w") as f:
+    f.write(credentials_json)
+
+creds = ServiceAccountCredentials.from_json_keyfile_name(os.path.join("resources", "google-credentials.json"), scope)
 client = gspread.authorize(creds)
 
 def addRow(casier, item, quantite, nom):
