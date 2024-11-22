@@ -10,7 +10,7 @@ from sheets import addRow, readInv
 
 SEP_CALLBACK = "|"
 CASIERS = constantes.CASIERS
-INGREDIENTS = ["Lait d'avoine", "Lait de riz", "Choco", "Cacao", "Cannelle", "Thym", "Sucre"]
+INGREDIENTS = ["Lait d'avoine", "Lait de riz", "Choco", "Cacao", "Cannelle", "Matcha", "Épices de Noël"]
 QUANTITES = [-1, 1, -5, 5, -6, 6]
 LIMIT_RESPONSE = 300 #300s de délai entre dernière interaction et réponse
 
@@ -36,8 +36,9 @@ def fetch_inv(bot: TeleBot = None, message = None) -> dict:
 dataPath = os.path.join("resources", "bot_data.p")
 if os.path.exists(dataPath):
     DATA = pickle.load(open(dataPath, "rb"))
+    DATA["INVENTARY"] = readInv()
 else:
-    DATA = {"RECORD_INV": dict(), "INVENTARY": fetch_inv(), "WILL_SEND_BILL": set()}
+    DATA = {"RECORD_INV": dict(), "INVENTARY": readInv(), "WILL_SEND_BILL": set()}
     #DATA["RECORD_INV"] is a dictionary {userId: {"casier":x, "timestamp":y, "ingredient":z, "quantite":a}}
     #DATA["INVENTARY"] is a dictionary {ingredient: {locker: quantity}}
     #DATA["WILL_SEND_BILL"] is a set {userId}
@@ -159,6 +160,9 @@ def inv_cb(bot: TeleBot, call) -> None:
 def check_inv(bot: TeleBot, message) -> None:
     bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ}: {str(details)}" for categ, details in DATA["INVENTARY"].items()))
 
+def casiers(bot: TeleBot, message) -> None:
+    bot.send_message(message.from_user.id, "*CM1-989*\n- Chocolat + Cacao\n- Gobelets\n- 2 Casseroles\n- Épices\n\n*CM1-1031*\n- Matos de vaisselle\n- Goodies\n- Plaques chauffantes\n\n*CM1-1058*\n- Lait\n- Factures")
+
 def check_if_group(func):
     def do_if_group(bot: TeleBot, message):
         chat_info = bot.get_chat(message.chat.id)
@@ -195,7 +199,7 @@ def send_feedback(message, bot: TeleBot):
     bot.send_message(GROUPS["Comite"], full_msg, message_thread_id=THREADS["Comite"]["Feedback"])
 #-------------------------------------------------------------------------------------------------------------------
 
-funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee, "/feedback": feedback}
+funcs = {"/ayo": ayo, "/bill": bill, "/inv": reg_inv, "/màj": maj, "/check_inv": check_inv, "/fetch_inv": fetch_inv, "/coffee": coffee, "/feedback": feedback, "/casiers": casiers}
 callbacks = {"inv": inv_cb}
 def main() -> TeleBot:
     """
