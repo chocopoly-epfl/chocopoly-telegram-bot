@@ -30,12 +30,25 @@ def readInv():
     getCell = lambda rowId, colId: sheet.cell(rowId, colId).value
 
     inv = dict()
+
+    #get the cells
+    table = sheet.batch_get(["A2:H20"])
+    nbCols = 7
+
+    for colId in range(nbCols):
+        colItem = table[0][colId]
+        if colItem:
+            inv[colItem] = {row[0]: cell for row in table if (cell := row[colId]) != '0'}
+        else:
+            break
     
+    """
     for colId in range(2, 8+1):
         colItem = getCell(2, colId)
         if colItem:
             inv[colItem] = {getCell(rowId, 1): cell for rowId in range(3, 12+1) if (cell := getCell(rowId, colId)) != '0'}
         else:
             break
+    """
     
     return inv
