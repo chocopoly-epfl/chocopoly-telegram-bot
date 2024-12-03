@@ -36,7 +36,9 @@ dataPath = os.path.join("resources", "bot_data.p")
 if os.path.exists(dataPath):
     DATA = pickle.load(open(dataPath, "rb"))
 else:
-    DATA = {"RECORD_INV": dict(), "INVENTARY": readInv(), "WILL_SEND_BILL": set()}
+    DATA = {"RECORD_INV": dict(), "INVENTARY": dict(), "WILL_SEND_BILL": set()}
+    #don't forget to perform readInv on start
+    
     #DATA["RECORD_INV"] is a dictionary {userId: {"casier":x, "timestamp":y, "ingredient":z, "quantite":a}}
     #DATA["INVENTARY"] is a dictionary {ingredient: {locker: quantity}}
     #DATA["WILL_SEND_BILL"] is a set {userId}
