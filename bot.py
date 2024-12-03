@@ -24,13 +24,10 @@ def fetch_inv(bot: TeleBot = None, message = None) -> dict:
     Fetch the inventary. If a bot and message are provided, send a confirmation that the fetch has been completed.
     """
     
-    #DATA["INVENTARY"].update(readInv())
-    inv = readInv()
+    DATA["INVENTARY"].update(readInv())
 
     if bot is not None and message is not None:
         bot.send_message(message.chat.id, "Fetch ok")
-    
-    return inv
 
 #load bot data
 dataPath = os.path.join("resources", "bot_data.p")
@@ -245,6 +242,6 @@ def main() -> TeleBot:
     return bot
 
 print("Bot started at", time())
-
+fetch_inv()
 bot = main()
 bot.infinity_polling()
