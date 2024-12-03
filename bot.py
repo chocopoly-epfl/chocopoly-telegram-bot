@@ -35,7 +35,6 @@ def fetch_inv(bot: TeleBot = None, message = None) -> dict:
 dataPath = os.path.join("resources", "bot_data.p")
 if os.path.exists(dataPath):
     DATA = pickle.load(open(dataPath, "rb"))
-    DATA["INVENTARY"] = readInv()
 else:
     DATA = {"RECORD_INV": dict(), "INVENTARY": readInv(), "WILL_SEND_BILL": set()}
     #DATA["RECORD_INV"] is a dictionary {userId: {"casier":x, "timestamp":y, "ingredient":z, "quantite":a}}
