@@ -36,7 +36,10 @@ def readInv():
     nbCols = 7
 
     for colId in range(nbCols):
-        colItem = table[0][colId][0]
+        colItem = table[0][colId]
+        print("colItem", colItem)
+        print("table", table)
+
         if colItem:
             inv[colItem] = {row[0]: cell for row in table if (cell := row[colId]) != '0'}
         else:
