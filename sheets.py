@@ -31,7 +31,7 @@ def readInv():
 
     inv = dict()
     
-    for colId in range(2, 26+1):
+    for colId in range(2, 8+1):
         colItem = getCell(2, colId)
         if colItem:
             inv[colItem] = {getCell(rowId, 1): cell for rowId in range(3, 12+1) if (cell := getCell(rowId, colId)) != '0'}
