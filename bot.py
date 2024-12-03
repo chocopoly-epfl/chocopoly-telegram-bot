@@ -28,6 +28,8 @@ def fetch_inv(bot: TeleBot = None, message = None) -> dict:
 
     if bot is not None and message is not None:
         bot.send_message(message.chat.id, "Fetch ok")
+    
+    return DATA["INVENTARY"]
 
 #load bot data
 dataPath = os.path.join("resources", "bot_data.p")
@@ -242,6 +244,5 @@ def main() -> TeleBot:
     return bot
 
 print("Bot started at", time())
-fetch_inv()
 bot = main()
 bot.infinity_polling()
