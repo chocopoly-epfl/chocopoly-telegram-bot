@@ -34,7 +34,7 @@ def readInv():
     for colId in range(2, 26+1):
         colItem = getCell(2, colId)
         if colItem:
-            inv[colItem] = {getCell(rowId, 1): cell for rowId in range(3, 5+1) if (cell := getCell(rowId, colId))}
+            inv[colItem] = {getCell(rowId, 1): cell for rowId in range(3, 20+1) if (cell := getCell(rowId, colId)) != '0'}
         else:
             break
     
