@@ -130,7 +130,7 @@ def inv_cb(bot: TeleBot, call) -> None:
 
             bot.answer_callback_query(call.id, affiResume(dataRecord[userId]))
             if "quantite" not in dataRecord[userId]:
-                bot.send_message(userId, "Quantité ajoutée dans le casier: 0", reply_markup=creeMarkup("qte_inv", [str(x) if x < 0 else f"+{x}" for x in QUANTITES] + ["OK"], userId))
+                bot.send_message(userId, "Quantité ajoutée dans le casier : 0", reply_markup=creeMarkup("qte_inv", [str(x) if x < 0 else f"+{x}" for x in QUANTITES] + ["OK"], userId))
         else:
             if userId in dataRecord:
                 del dataRecord[userId]
