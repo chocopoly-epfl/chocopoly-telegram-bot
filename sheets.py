@@ -1,5 +1,6 @@
 import gspread
 import os
+import threading
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
@@ -24,7 +25,11 @@ def addRow(casier, item, quantite, nom):
 
         ajout = "" if quantite < 0 else quantite
         retrait = "" if quantite > 0 else -1 * quantite
-        sheet.append_row(["", datetime.today().strftime('%d-%m-%Y'), item, categ, ajout, retrait, casier, nom], table_range="B3:I3")
+        worker = lambda: sheet.append_row(["", datetime.today().strftime('%d-%m-%Y'), item, categ, ajout, retrait, casier, nom], table_range="B3:I3")
+
+        #lancement dans un thread pour aller plus vite
+        thread = threading.Thread(target=worker)
+        thread.start()
 
 def readInv():
     sheet = client.open("Inventaire").get_worksheet_by_id(749275013)
