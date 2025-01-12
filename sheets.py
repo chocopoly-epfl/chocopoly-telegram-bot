@@ -10,8 +10,9 @@ scope = ["https://spreadsheets.google.com/feeds",
 
 # read credentials from env, then write it to google-credentials.json
 credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
-with open(os.path.join("resources", "google-credentials.json"), "w") as f:
-    f.write(credentials_json)
+if credentials_json:
+    with open(os.path.join("resources", "google-credentials.json"), "w") as f:
+        f.write(credentials_json)
 
 creds = ServiceAccountCredentials.from_json_keyfile_name(os.path.join("resources", "google-credentials.json"), scope)
 client = gspread.authorize(creds)
