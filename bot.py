@@ -150,7 +150,7 @@ def inv_cb(bot: TeleBot, call) -> None:
                     
                     bot.answer_callback_query(call.id, affiResume(dataRecord[userId]))
                     bot.send_message(userId, f"Enregistrement de : {quantite} {item} dans le casier {casier}")
-                    DATA["INVENTARY"][item.split()[0]][casier] += quantite
+                    DATA["INVENTARY"][item.split()[0]][casier] = DATA["INVENTARY"][item.split()[0]].get(casier, 0) + quantite
                     del dataRecord[userId]
                 else:
                     bot.answer_callback_query(call.id, "Pas de changement à enregistrer")
