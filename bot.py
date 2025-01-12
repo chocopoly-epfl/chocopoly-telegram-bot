@@ -43,6 +43,8 @@ else:
     #DATA["INVENTARY"] is a dictionary {ingredient: {locker: quantity}}
     #DATA["WILL_SEND_BILL"] is a set {userId}
 
+fetch_inv()
+
 def save() -> None:
     """
     Save the bot data as a pickle file.
@@ -158,7 +160,10 @@ def inv_cb(bot: TeleBot, call) -> None:
                 del dataRecord[userId]
 
 def check_inv(bot: TeleBot, message) -> None:
-    bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ}: {str(details)}" for categ, details in DATA["INVENTARY"].items()))
+    locker_or_someone = lambda name: any(x.isdigit() for x in name)
+    affi_details = lambda details: ", ".join(f"{qty} au {locker_name}" if locker_or_someone(locker_name) else f"{qty} chez {locker_name}" for locker_name, qty in details.items())
+    total_ing = lambda details: sum(details.values())
+    bot.send_message(message.from_user.id, "*Inventaire*\n" + "\n".join(f"{categ} (total {total_ing(details)}) : {affi_details(details)}" for categ, details in DATA["INVENTARY"].items()))
 
 def casiers(bot: TeleBot, message) -> None:
     bot.send_message(message.from_user.id, "*CM1-989*\n- Chocolat + Cacao\n- Gobelets\n- 2 Casseroles\n- Épices\n\n*CM1-1031*\n- Matos de vaisselle\n- Goodies\n- Plaques chauffantes\n\n*CM1-1058*\n- Lait\n- Factures")
