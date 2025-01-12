@@ -32,26 +32,10 @@ def readInv():
     inv = dict()
 
     #get the cells
-    table = sheet.batch_get(["A2:H20"])
-    nbCols = 7
+    table = sheet.batch_get(["A2:H20"])[0]
 
-    for colId in range(nbCols):
-        colItem = table[0][colId]
-        print("colItem", colItem)
-        print("table", table)
-
-        if colItem:
-            inv[colItem] = {row[0]: cell for row in table if (cell := row[colId]) != '0'}
-        else:
-            break
-    
-    """
-    for colId in range(2, 8+1):
-        colItem = getCell(2, colId)
-        if colItem:
-            inv[colItem] = {getCell(rowId, 1): cell for rowId in range(3, 12+1) if (cell := getCell(rowId, colId)) != '0'}
-        else:
-            break
-    """
+    for colId, colItem in enumerate(table[0][1:]):
+        colId += 1 #décalage de 1 à cause du [1:]
+        inv[colItem] = {row[0]: int(cell) for row in table[1:] if colId < len(row) and (cell := row[colId]) not in ('0', '')}
     
     return inv
